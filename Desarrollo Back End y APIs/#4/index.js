@@ -39,17 +39,31 @@ app.get("/api/:date?", (req, res) => {
   let date = req.params.date;
   let dateObject;
 
-  if (!date) return res.json({ error : "Invalid Date" });
-  if (isNaN(dateObject)) {
-    dateObject = new Date(parseInt(date));
+  // Si no se proporciona la fecha, devolver la fecha actual
+  if (!date) {
+    dateObject = new Date();
     return res.json({ unix: dateObject.getTime(), utc: dateObject.toUTCString() });
+  }
+
+  // Si el parámetro 'date' no es un número ni una fecha válida
+  if (isNaN(date) && isNaN(Date.parse(date))) {
+    return res.json({ error: "Invalid Date" });
+  }
+
+  // Si 'date' es un número, interpretarlo como un timestamp UNIX
+  if (!isNaN(date)) {
+    dateObject = new Date(parseInt(date));  // Convertir el número en un objeto Date
+    return res.json({ unix: dateObject.getTime(), utc: dateObject.toUTCString() });
+  }
+
+  // Si 'date' es una cadena, intentar convertirla en un objeto Date
+  dateObject = new Date(date);
+
+  // Verificar si la fecha es válida
+  if (dateObject.toString() === "Invalid Date") {
+    return res.json({ error: "Invalid Date" });
   } else {
-    dateObject = new Date(date);
-    if (dateObject.toString() === "Invalid Date") {
-      return res.json({ error : "Invalid Date" });
-    } else {
-      return res.json({ unix: dateObject.getTime(), utc: dateObject.toUTCString() });
-    }
+    return res.json({ unix: dateObject.getTime(), utc: dateObject.toUTCString() });
   }
 });
 
