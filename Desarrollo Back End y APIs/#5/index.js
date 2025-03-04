@@ -31,13 +31,16 @@ app.get("/api/hello", function (req, res) {
  * Esperando:4. Una petición a /api/whoami debe devolver un objeto JSON con tu software en la clave de software.
  */
 
+//example
+//{"ipaddress":"::ffff:159.20.14.100","language":"en-US,en;q=0.5", "software":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0"}
 app.get("/api/whoami", function (req, res) {
   return res.json({
     ipaddress: req.ip,
+    language: req.headers["accept-language"],
     software: req.headers["user-agent"],
-    language: "en-US,en;q=0.5",
   });
 });
+
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT || 3000, function () {
